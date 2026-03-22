@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS CSAT Weekly Trends</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #6c757d;
+      --border: #e9ecef;
+      --accent: #4361ee;
+      --green: #2dc653;
+      --yellow: #ffc107;
+      --red: #ef476f;
+      --blue: #4361ee;
+      --teal: #0dcaf0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5;
+    }
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white; padding: 28px 32px 20px; margin-bottom: 24px;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+    header p { font-size: 0.85rem; opacity: 0.7; }
+    .controls {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      padding: 0 24px; margin-bottom: 20px; align-items: center;
+    }
+    .controls label { font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .controls select, .controls input {
+      padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.9rem; background: var(--card); min-width: 180px;
+    }
+    .controls select:focus, .controls input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(67,97,238,0.15); }
+    .toggle-group {
+      display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    }
+    .toggle-group button {
+      padding: 8px 16px; border: none; background: var(--card); cursor: pointer;
+      font-size: 0.85rem; font-weight: 500; color: var(--muted); transition: all 0.2s;
+    }
+    .toggle-group button.active { background: var(--accent); color: white; }
+    .toggle-group button:not(:last-child) { border-right: 1px solid var(--border); }
+    .kpi-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px; padding: 0 24px; margin-bottom: 24px;
+    }
+    .kpi {
+      background: var(--card); border-radius: 12px; padding: 16px 20px;
+      border: 1px solid var(--border);
+    }
+    .kpi .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .kpi .value { font-size: 1.8rem; font-weight: 700; }
+    .kpi .delta { font-size: 0.8rem; margin-top: 2px; }
+    .kpi .delta.up { color: var(--green); }
+    .kpi .delta.down { color: var(--red); }
+    .kpi .delta.flat { color: var(--muted); }
+    .charts-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+      padding: 0 24px; margin-bottom: 24px;
+    }
+    @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+    .chart-card {
+      background: var(--card); border-radius: 12px; padding: 20px;
+      border: 1px solid var(--border);
+    }
+    .chart-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 12px; }
+    .chart-card canvas { width: 100% !important; max-height: 300px; }
+    .table-section {
+      padding: 0 24px; margin-bottom: 32px;
+    }
+    .table-section h3 { font-size: 1rem; font-weight: 600; margin-bottom: 12px; }
+    .heatmap-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      background: var(--card); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--border); font-size: 0.82rem;
+    }
+    .heatmap-table th {
+      padding: 10px 12px; background: #1a1a2e; color: white;
+      font-weight: 600; text-align: center; position: sticky; top: 0; z-index: 2;
+    }
+    .heatmap-table th:first-child { text-align: left; min-width: 160px; }
+    .heatmap-table td {
+      padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--border);
+      font-weight: 500; transition: all 0.15s;
+    }
+    .heatmap-table td:first-child {
+      text-align: left; font-weight: 600; background: #fafafa;
+      position: sticky; left: 0; z-index: 1;
+    }
+    .heatmap-table tr:hover td { background-color: #f0f4ff; }
+    .heatmap-table tr:hover td:first-child { background-color: #e8edff; }
+    .heatmap-table td.green { background: #c6efce; color: #1a5c2a; }
+    .heatmap-table td.yellow { background: #ffeb9c; color: #7a6800; }
+    .heatmap-table td.red { background: #ffc7ce; color: #9c1f2e; }
+    .heatmap-table td.null-val { background: #f2f2f2; color: #aaa; }
+    .heatmap-table tr:hover td.green { background: #a8e6b8; }
+    .heatmap-table tr:hover td.yellow { background: #ffe07a; }
+    .heatmap-table tr:hover td.red { background: #ffb0ba; }
+    .table-scroll { overflow-x: auto; }
+    footer {
+      text-align: center; padding: 20px; font-size: 0.78rem; color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CS Agent CSAT Weekly Trends</h1>
+    <p id="last-updated">Loading data...</p>
+  </header>
+
+  <div class="controls">
+    <div>
+      <label>View</label><br>
+      <div class="toggle-group" id="view-toggle">
+        <button class="active" data-view="agents">By Agent</button>
+        <button data-view="supervisors">By Supervisor</button>
+      </div>
+    </div>
+    <div>
+      <label>Metric</label><br>
+      <div class="toggle-group" id="metric-toggle">
+        <button class="active" data-metric="zd">ZD CSAT</button>
+        <button data-metric="tidio">Tidio CSAT</button>
+      </div>
+    </div>
+    <div>
+      <label>Filter Person</label><br>
+      <select id="person-filter"><option value="all">All</option></select>
+    </div>
+    <div>
+      <label>Search</label><br>
+      <input type="text" id="search-box" placeholder="Type a name...">
+    </div>
+  </div>
+
+  <div class="kpi-row" id="kpi-row"></div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3 id="trend-title">Overall Trend</h3>
+      <canvas id="trendChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3 id="dist-title">Latest Week Distribution</h3>
+      <canvas id="distChart"></canvas>
+    </div>
+  </div>
+
+  <div class="table-section">
+    <h3 id="table-title">Heatmap</h3>
+    <div class="table-scroll">
+      <table class="heatmap-table" id="heatmap"></table>
+    </div>
+  </div>
+
+  <footer>
+    Data sourced from HEX CS Agents Performance report. Auto-updated weekly via GitHub Actions.
+  </footer>
+
+  <script>
+    let DATA = null;
+    let currentView = 'agents';
+    let currentMetric = 'zd';
+    let currentPerson = 'all';
+    let searchText = '';
+
+    const COLORS = [
+      '#4361ee','#ef476f','#06d6a0','#ffd166','#118ab2','#073b4c',
+      '#e07a5f','#81b29a','#f2cc8f','#3d405b','#e63946','#457b9d',
+      '#2a9d8f','#e9c46a','#264653','#f4a261','#a8dadc','#6d6875',
+      '#b5838d','#ffb4a2','#023e8a','#48cae4','#caf0f8','#780000',
+      '#c1121f','#003049','#669bbc','#fdf0d5'
+    ];
+
+    async function loadData() {
+      const res = await fetch('data.json?' + Date.now());
+      DATA = await res.json();
+      document.getElementById('last-updated').textContent =
+        `Last updated: ${DATA.last_updated} \u2022 ${DATA.weeks.length} weeks tracked`;
+      populateFilter();
+      render();
+    }
+
+    function populateFilter() {
+      const sel = document.getElementById('person-filter');
+      sel.innerHTML = '<option value="all">All</option>';
+      const source = DATA[currentView];
+      Object.keys(source).sort().forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name; opt.textContent = name;
+        sel.appendChild(opt);
+      });
+    }
+
+    function getFilteredNames() {
+      const source = DATA[currentView];
+      let names = Object.keys(source).sort();
+      if (currentPerson !== 'all') names = names.filter(n => n === currentPerson);
+      if (searchText) {
+        const q = searchText.toLowerCase();
+        names = names.filter(n => n.toLowerCase().includes(q));
+      }
+      return names;
+    }
+
+    function getVal(personData, week) {
+      if (!personData[week]) return null;
+      return personData[week][currentMetric];
+    }
+
+    function computeAvgByWeek(names, source) {
+      return DATA.weeks.map(w => {
+        let sum = 0, count = 0;
+        names.forEach(name => {
+          const v = getVal(source[name], w.week);
+          if (v !== null && v !== undefined) { sum += v; count++; }
+        });
+        return count > 0 ? Math.round(sum / count) : null;
+      });
+    }
+
+    function renderKPIs() {
+      const source = DATA[currentView];
+      const names = getFilteredNames();
+      const weeks = DATA.weeks;
+      const lastWeek = weeks[weeks.length - 1].week;
+      const prevWeek = weeks.length > 1 ? weeks[weeks.length - 2].week : null;
+
+      let lastVals = [], prevVals = [];
+      names.forEach(name => {
+        const lv = getVal(source[name], lastWeek);
+        if (lv !== null) lastVals.push(lv);
+        if (prevWeek) {
+          const pv = getVal(source[name], prevWeek);
+          if (pv !== null) prevVals.push(pv);
+        }
+      });
+
+      const avg = lastVals.length ? Math.round(lastVals.reduce((a,b) => a+b, 0) / lastVals.length) : null;
+      const prevAvg = prevVals.length ? Math.round(prevVals.reduce((a,b) => a+b, 0) / prevVals.length) : null;
+      const above90 = lastVals.filter(v => v >= 90).length;
+      const below75 = lastVals.filter(v => v < 75).length;
+      const delta = (avg !== null && prevAvg !== null) ? avg - prevAvg : null;
+
+      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : 'Tidio CSAT';
+      const deltaHtml = delta !== null
+        ? `<div class="delta ${delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat'}">${delta > 0 ? '\u25B2' : delta < 0 ? '\u25BC' : '\u25C6'} ${Math.abs(delta)}pp vs prior week</div>`
+        : '';
+
+      document.getElementById('kpi-row').innerHTML = `
+        <div class="kpi"><div class="label">Avg ${metricLabel} (Wk ${weeks.length})</div><div class="value">${avg !== null ? avg + '%' : 'N/A'}</div>${deltaHtml}</div>
+        <div class="kpi"><div class="label">\u2265 90% (Green)</div><div class="value" style="color:var(--green)">${above90}</div><div class="delta flat">of ${lastVals.length} with data</div></div>
+        <div class="kpi"><div class="label">&lt; 75% (Red)</div><div class="value" style="color:var(--red)">${below75}</div><div class="delta flat">of ${lastVals.length} with data</div></div>
+        <div class="kpi"><div class="label">${currentView === 'agents' ? 'Agents' : 'Supervisors'} Shown</div><div class="value">${names.length}</div><div class="delta flat">${lastVals.length} with data this week</div></div>
+      `;
+    }
+
+    let trendChart = null, distChart = null;
+
+    function renderTrendChart() {
+      const source = DATA[currentView];
+      const names = getFilteredNames();
+      const labels = DATA.weeks.map(w => 'Wk ' + parseInt(w.week.slice(4)));
+      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : 'Tidio CSAT';
+
+      document.getElementById('trend-title').textContent = `${metricLabel} Trend`;
+
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      if (trendChart) trendChart.destroy();
+
+      const datasets = [];
+
+      if (names.length <= 8) {
+        names.forEach((name, i) => {
+          const data = DATA.weeks.map(w => getVal(source[name], w.week));
+          datasets.push({
+            label: name, data, borderColor: COLORS[i % COLORS.length],
+            backgroundColor: COLORS[i % COLORS.length] + '20',
+            tension: 0.3, pointRadius: 4, pointHoverRadius: 6,
+            borderWidth: 2.5, spanGaps: true
+          });
+        });
+      } else {
+        const avgData = computeAvgByWeek(names, source);
+        datasets.push({
+          label: 'Average', data: avgData, borderColor: '#4361ee',
+          backgroundColor: '#4361ee20', tension: 0.3, pointRadius: 5,
+          pointHoverRadius: 7, borderWidth: 3, fill: true, spanGaps: true
+        });
+        // Add 90% threshold line
+        datasets.push({
+          label: '90% Target', data: Array(DATA.weeks.length).fill(90),
+          borderColor: '#2dc65380', borderDash: [6, 4], borderWidth: 1.5,
+          pointRadius: 0, fill: false
+        });
+      }
+
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } },
+            tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y !== null ? c.parsed.y + '%' : 'N/A'}` } }
+          },
+          scales: {
+            y: { min: 0, max: 105, ticks: { callback: v => v + '%' } }
+          },
+          interaction: { intersect: false, mode: 'index' }
+        }
+      });
+    }
+
+    function renderDistChart() {
+      const source = DATA[currentView];
+      const names = getFilteredNames();
+      const lastWeek = DATA.weeks[DATA.weeks.length - 1].week;
+      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : 'Tidio CSAT';
+
+      document.getElementById('dist-title').textContent = `${metricLabel} Distribution (Latest Week)`;
+
+      let green = 0, yellow = 0, red = 0, noData = 0;
+      names.forEach(name => {
+        const v = getVal(source[name], lastWeek);
+        if (v === null || v === undefined) noData++;
+        else if (v >= 90) green++;
+        else if (v >= 75) yellow++;
+        else red++;
+      });
+
+      const ctx = document.getElementById('distChart').getContext('2d');
+      if (distChart) distChart.destroy();
+
+      distChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['\u2265 90% (Green)', '75-89% (Yellow)', '< 75% (Red)', 'No Data'],
+          datasets: [{
+            data: [green, yellow, red, noData],
+            backgroundColor: ['#2dc653', '#ffc107', '#ef476f', '#dee2e6'],
+            borderWidth: 2, borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } }
+          },
+          cutout: '55%'
+        }
+      });
+    }
+
+    function renderHeatmap() {
+      const source = DATA[currentView];
+      const names = getFilteredNames();
+      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : 'Tidio CSAT';
+      const entityLabel = currentView === 'agents' ? 'Agent' : 'Supervisor';
+
+      document.getElementById('table-title').textContent = `${metricLabel} by ${entityLabel} \u2014 Heatmap`;
+
+      const weekLabels = DATA.weeks.map(w => 'Wk ' + parseInt(w.week.slice(4)));
+      let html = '<thead><tr><th>' + entityLabel + '</th>' +
+        weekLabels.map(l => '<th>' + l + '</th>').join('') + '</tr></thead><tbody>';
+
+      names.forEach(name => {
+        html += '<tr><td>' + name + '</td>';
+        DATA.weeks.forEach(w => {
+          const v = getVal(source[name], w.week);
+          if (v === null || v === undefined) {
+            html += '<td class="null-val">\u2014</td>';
+          } else {
+            const cls = v >= 90 ? 'green' : v >= 75 ? 'yellow' : 'red';
+            html += `<td class="${cls}">${v}%</td>`;
+          }
+        });
+        html += '</tr>';
+      });
+
+      html += '</tbody>';
+      document.getElementById('heatmap').innerHTML = html;
+    }
+
+    function render() {
+      renderKPIs();
+      renderTrendChart();
+      renderDistChart();
+      renderHeatmap();
+    }
+
+    // Event listeners
+    document.getElementById('view-toggle').addEventListener('click', e => {
+      if (!e.target.dataset.view) return;
+      currentView = e.target.dataset.view;
+      document.querySelectorAll('#view-toggle button').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentPerson = 'all';
+      document.getElementById('person-filter').value = 'all';
+      populateFilter();
+      render();
+    });
+
+    document.getElementById('metric-toggle').addEventListener('click', e => {
+      if (!e.target.dataset.metric) return;
+      currentMetric = e.target.dataset.metric;
+      document.querySelectorAll('#metric-toggle button').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      render();
+    });
+
+    document.getElementById('person-filter').addEventListener('change', e => {
+      currentPerson = e.target.value;
+      render();
+    });
+
+    document.getElementById('search-box').addEventListener('input', e => {
+      searchText = e.target.value;
+      render();
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
