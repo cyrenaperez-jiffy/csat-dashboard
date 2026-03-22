@@ -131,6 +131,7 @@
       <div class="toggle-group" id="metric-toggle">
         <button class="active" data-metric="zd">ZD CSAT</button>
         <button data-metric="tidio">Tidio CSAT</button>
+        <button data-metric="combined">Combined</button>
       </div>
     </div>
     <div>
@@ -215,6 +216,15 @@
 
     function getVal(personData, week) {
       if (!personData[week]) return null;
+      if (currentMetric === 'combined') {
+        const zd = personData[week].zd;
+        const tidio = personData[week].tidio;
+        if (zd !== null && zd !== undefined && tidio !== null && tidio !== undefined) {
+          return Math.round((zd + tidio) / 2);
+        } else if (zd !== null && zd !== undefined) return zd;
+        else if (tidio !== null && tidio !== undefined) return tidio;
+        return null;
+      }
       return personData[week][currentMetric];
     }
 
@@ -248,19 +258,19 @@
 
       const avg = lastVals.length ? Math.round(lastVals.reduce((a,b) => a+b, 0) / lastVals.length) : null;
       const prevAvg = prevVals.length ? Math.round(prevVals.reduce((a,b) => a+b, 0) / prevVals.length) : null;
-      const above90 = lastVals.filter(v => v >= 90).length;
-      const below75 = lastVals.filter(v => v < 75).length;
+      const above95 = lastVals.filter(v => v >= 95).length;
+      const below90 = lastVals.filter(v => v < 90).length;
       const delta = (avg !== null && prevAvg !== null) ? avg - prevAvg : null;
 
-      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : 'Tidio CSAT';
+      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : currentMetric === 'tidio' ? 'Tidio CSAT' : 'Combined CSAT';
       const deltaHtml = delta !== null
         ? `<div class="delta ${delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat'}">${delta > 0 ? '\u25B2' : delta < 0 ? '\u25BC' : '\u25C6'} ${Math.abs(delta)}pp vs prior week</div>`
         : '';
 
       document.getElementById('kpi-row').innerHTML = `
         <div class="kpi"><div class="label">Avg ${metricLabel} (Wk ${weeks.length})</div><div class="value">${avg !== null ? avg + '%' : 'N/A'}</div>${deltaHtml}</div>
-        <div class="kpi"><div class="label">\u2265 90% (Green)</div><div class="value" style="color:var(--green)">${above90}</div><div class="delta flat">of ${lastVals.length} with data</div></div>
-        <div class="kpi"><div class="label">&lt; 75% (Red)</div><div class="value" style="color:var(--red)">${below75}</div><div class="delta flat">of ${lastVals.length} with data</div></div>
+        <div class="kpi"><div class="label">\u2265 95% (Green)</div><div class="value" style="color:var(--green)">${above95}</div><div class="delta flat">of ${lastVals.length} with data</div></div>
+        <div class="kpi"><div class="label">&lt; 90% (Red)</div><div class="value" style="color:var(--red)">${below90}</div><div class="delta flat">of ${lastVals.length} with data</div></div>
         <div class="kpi"><div class="label">${currentView === 'agents' ? 'Agents' : 'Supervisors'} Shown</div><div class="value">${names.length}</div><div class="delta flat">${lastVals.length} with data this week</div></div>
       `;
     }
@@ -271,7 +281,7 @@
       const source = DATA[currentView];
       const names = getFilteredNames();
       const labels = DATA.weeks.map(w => 'Wk ' + parseInt(w.week.slice(4)));
-      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : 'Tidio CSAT';
+      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : currentMetric === 'tidio' ? 'Tidio CSAT' : 'Combined CSAT';
 
       document.getElementById('trend-title').textContent = `${metricLabel} Trend`;
 
@@ -297,9 +307,9 @@
           backgroundColor: '#4361ee20', tension: 0.3, pointRadius: 5,
           pointHoverRadius: 7, borderWidth: 3, fill: true, spanGaps: true
         });
-        // Add 90% threshold line
+        // Add 95% threshold line
         datasets.push({
-          label: '90% Target', data: Array(DATA.weeks.length).fill(90),
+          label: '95% Target', data: Array(DATA.weeks.length).fill(95),
           borderColor: '#2dc65380', borderDash: [6, 4], borderWidth: 1.5,
           pointRadius: 0, fill: false
         });
@@ -315,7 +325,7 @@
             tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y !== null ? c.parsed.y + '%' : 'N/A'}` } }
           },
           scales: {
-            y: { min: 0, max: 105, ticks: { callback: v => v + '%' } }
+            y: { min: 0, max: 102, ticks: { stepSize: 2, callback: v => v + '%' } }
           },
           interaction: { intersect: false, mode: 'index' }
         }
@@ -326,7 +336,7 @@
       const source = DATA[currentView];
       const names = getFilteredNames();
       const lastWeek = DATA.weeks[DATA.weeks.length - 1].week;
-      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : 'Tidio CSAT';
+      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : currentMetric === 'tidio' ? 'Tidio CSAT' : 'Combined CSAT';
 
       document.getElementById('dist-title').textContent = `${metricLabel} Distribution (Latest Week)`;
 
@@ -334,8 +344,8 @@
       names.forEach(name => {
         const v = getVal(source[name], lastWeek);
         if (v === null || v === undefined) noData++;
-        else if (v >= 90) green++;
-        else if (v >= 75) yellow++;
+        else if (v >= 95) green++;
+        else if (v >= 90) yellow++;
         else red++;
       });
 
@@ -345,7 +355,7 @@
       distChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['\u2265 90% (Green)', '75-89% (Yellow)', '< 75% (Red)', 'No Data'],
+          labels: ['\u2265 95% (Green)', '90-94% (Yellow)', '< 90% (Red)', 'No Data'],
           datasets: [{
             data: [green, yellow, red, noData],
             backgroundColor: ['#2dc653', '#ffc107', '#ef476f', '#dee2e6'],
@@ -365,7 +375,7 @@
     function renderHeatmap() {
       const source = DATA[currentView];
       const names = getFilteredNames();
-      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : 'Tidio CSAT';
+      const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : currentMetric === 'tidio' ? 'Tidio CSAT' : 'Combined CSAT';
       const entityLabel = currentView === 'agents' ? 'Agent' : 'Supervisor';
 
       document.getElementById('table-title').textContent = `${metricLabel} by ${entityLabel} \u2014 Heatmap`;
@@ -381,7 +391,7 @@
           if (v === null || v === undefined) {
             html += '<td class="null-val">\u2014</td>';
           } else {
-            const cls = v >= 90 ? 'green' : v >= 75 ? 'yellow' : 'red';
+            const cls = v >= 95 ? 'green' : v >= 90 ? 'yellow' : 'red';
             html += `<td class="${cls}">${v}%</td>`;
           }
         });
