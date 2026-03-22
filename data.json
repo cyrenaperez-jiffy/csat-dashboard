@@ -1,1 +1,308 @@
-
+{
+  "last_updated": "2026-03-22",
+  "weeks": [
+    {"week": "202601", "start": "2026-01-04", "end": "2026-01-10"},
+    {"week": "202602", "start": "2026-01-11", "end": "2026-01-17"},
+    {"week": "202603", "start": "2026-01-18", "end": "2026-01-24"},
+    {"week": "202604", "start": "2026-01-25", "end": "2026-01-31"},
+    {"week": "202605", "start": "2026-02-01", "end": "2026-02-07"},
+    {"week": "202606", "start": "2026-02-08", "end": "2026-02-14"},
+    {"week": "202607", "start": "2026-02-15", "end": "2026-02-21"},
+    {"week": "202608", "start": "2026-02-22", "end": "2026-02-28"},
+    {"week": "202609", "start": "2026-03-01", "end": "2026-03-07"},
+    {"week": "202610", "start": "2026-03-08", "end": "2026-03-14"},
+    {"week": "202611", "start": "2026-03-15", "end": "2026-03-21"}
+  ],
+  "agents": {
+    "Damian Doubrava": {
+      "202601": {"zd": null, "tidio": 100}, "202602": {"zd": 100, "tidio": 100},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": 93, "tidio": null},
+      "202605": {"zd": 73, "tidio": null}, "202606": {"zd": 93, "tidio": null},
+      "202607": {"zd": 100, "tidio": 100}, "202608": {"zd": 100, "tidio": 100},
+      "202609": {"zd": null, "tidio": 83}, "202610": {"zd": 100, "tidio": 100},
+      "202611": {"zd": 100, "tidio": 92}
+    },
+    "Enrico Davis": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 50, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": 100, "tidio": 50}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 100, "tidio": 94}
+    },
+    "Rachel Dunlap": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": 100, "tidio": null}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 96, "tidio": null}
+    },
+    "Samantha Decastro": {
+      "202601": {"zd": 100, "tidio": 67}, "202602": {"zd": 100, "tidio": 100},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": 90, "tidio": null},
+      "202605": {"zd": 94, "tidio": null}, "202606": {"zd": 90, "tidio": null},
+      "202607": {"zd": 100, "tidio": 100}, "202608": {"zd": 100, "tidio": 100},
+      "202609": {"zd": null, "tidio": 100}, "202610": {"zd": 100, "tidio": 100},
+      "202611": {"zd": 100, "tidio": 90}
+    },
+    "Bo Repko": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": 100, "tidio": 100}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 100, "tidio": 100}
+    },
+    "Rosa Nuno": {
+      "202601": {"zd": 100, "tidio": 94}, "202602": {"zd": 88, "tidio": 100},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": 88, "tidio": null},
+      "202605": {"zd": 100, "tidio": null}, "202606": {"zd": 88, "tidio": null},
+      "202607": {"zd": 100, "tidio": 100}, "202608": {"zd": 100, "tidio": 100},
+      "202609": {"zd": 100, "tidio": 78}, "202610": {"zd": 100, "tidio": 100},
+      "202611": {"zd": 100, "tidio": 100}
+    },
+    "Jessie Gregory": {
+      "202601": {"zd": 96, "tidio": 86}, "202602": {"zd": 87, "tidio": 84},
+      "202603": {"zd": 83, "tidio": null}, "202604": {"zd": 79, "tidio": null},
+      "202605": {"zd": 81, "tidio": null}, "202606": {"zd": 79, "tidio": null},
+      "202607": {"zd": 75, "tidio": 55}, "202608": {"zd": 75, "tidio": 55},
+      "202609": {"zd": 100, "tidio": 75}, "202610": {"zd": 75, "tidio": 55},
+      "202611": {"zd": 100, "tidio": 94}
+    },
+    "Cristie Avant": {
+      "202601": {"zd": 100, "tidio": 90}, "202602": {"zd": 80, "tidio": 100},
+      "202603": {"zd": 87, "tidio": null}, "202604": {"zd": 71, "tidio": null},
+      "202605": {"zd": 94, "tidio": null}, "202606": {"zd": 71, "tidio": null},
+      "202607": {"zd": null, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": 100, "tidio": 83}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 100, "tidio": 92}
+    },
+    "Blanca Berumen": {
+      "202601": {"zd": 100, "tidio": null}, "202602": {"zd": 100, "tidio": 100},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": 100, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": 88}, "202608": {"zd": 100, "tidio": 88},
+      "202609": {"zd": null, "tidio": 86}, "202610": {"zd": 100, "tidio": 88},
+      "202611": {"zd": 100, "tidio": 91}
+    },
+    "Sarah Hajiali": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": null, "tidio": null}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 100, "tidio": null}
+    },
+    "Taylor Amos": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": 88, "tidio": null}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 94, "tidio": 100}
+    },
+    "Andre Cordero": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 67, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": 100, "tidio": 100}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 100, "tidio": 100}
+    },
+    "Ariashe Lowery": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": null, "tidio": null}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 87, "tidio": null}
+    },
+    "Preston Panetti": {
+      "202601": {"zd": 100, "tidio": 80}, "202602": {"zd": 96, "tidio": 78},
+      "202603": {"zd": 90, "tidio": null}, "202604": {"zd": 87, "tidio": null},
+      "202605": {"zd": 100, "tidio": null}, "202606": {"zd": 87, "tidio": null},
+      "202607": {"zd": null, "tidio": 86}, "202608": {"zd": null, "tidio": 86},
+      "202609": {"zd": null, "tidio": 88}, "202610": {"zd": null, "tidio": 86},
+      "202611": {"zd": 96, "tidio": 90}
+    },
+    "Bicky Purewal": {
+      "202601": {"zd": 100, "tidio": 95}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": 88, "tidio": null}, "202604": {"zd": 100, "tidio": null},
+      "202605": {"zd": 91, "tidio": null}, "202606": {"zd": 100, "tidio": null},
+      "202607": {"zd": 100, "tidio": 100}, "202608": {"zd": 100, "tidio": 100},
+      "202609": {"zd": null, "tidio": 75}, "202610": {"zd": 100, "tidio": 100},
+      "202611": {"zd": 100, "tidio": 89}
+    },
+    "Asia Campbell": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": 100, "tidio": 100}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 100, "tidio": 25}
+    },
+    "Bianca Young": {
+      "202601": {"zd": 89, "tidio": 100}, "202602": {"zd": 80, "tidio": 100},
+      "202603": {"zd": 83, "tidio": null}, "202604": {"zd": 89, "tidio": null},
+      "202605": {"zd": 75, "tidio": null}, "202606": {"zd": 89, "tidio": null},
+      "202607": {"zd": 100, "tidio": 50}, "202608": {"zd": 100, "tidio": 50},
+      "202609": {"zd": null, "tidio": 86}, "202610": {"zd": 100, "tidio": 50},
+      "202611": {"zd": 100, "tidio": 81}
+    },
+    "Sarah Al-Obaidi": {
+      "202601": {"zd": 100, "tidio": 80}, "202602": {"zd": 100, "tidio": 100},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": 75, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": 80}, "202608": {"zd": 100, "tidio": 80},
+      "202609": {"zd": null, "tidio": 86}, "202610": {"zd": 100, "tidio": 80},
+      "202611": {"zd": 100, "tidio": 79}
+    },
+    "Unaisa Aslam": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": null, "tidio": 50}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 92, "tidio": 82}
+    },
+    "Chassidy Williams": {
+      "202601": {"zd": 96, "tidio": 78}, "202602": {"zd": 100, "tidio": 88},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": 95, "tidio": null},
+      "202605": {"zd": 96, "tidio": null}, "202606": {"zd": 95, "tidio": null},
+      "202607": {"zd": 100, "tidio": 80}, "202608": {"zd": 100, "tidio": 80},
+      "202609": {"zd": null, "tidio": 100}, "202610": {"zd": 100, "tidio": 80},
+      "202611": {"zd": 100, "tidio": 67}
+    },
+    "Morgan Lankford": {
+      "202601": {"zd": 100, "tidio": 86}, "202602": {"zd": 67, "tidio": 83},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": 100, "tidio": null},
+      "202605": {"zd": 86, "tidio": null}, "202606": {"zd": 100, "tidio": null},
+      "202607": {"zd": 100, "tidio": 60}, "202608": {"zd": 100, "tidio": 60},
+      "202609": {"zd": 100, "tidio": 100}, "202610": {"zd": 100, "tidio": 60},
+      "202611": {"zd": 100, "tidio": 78}
+    },
+    "Chisa Ordu": {
+      "202601": {"zd": 100, "tidio": 73}, "202602": {"zd": 100, "tidio": 100},
+      "202603": {"zd": 89, "tidio": null}, "202604": {"zd": 92, "tidio": null},
+      "202605": {"zd": 87, "tidio": null}, "202606": {"zd": 92, "tidio": null},
+      "202607": {"zd": null, "tidio": 0}, "202608": {"zd": null, "tidio": 0},
+      "202609": {"zd": null, "tidio": 56}, "202610": {"zd": null, "tidio": 0},
+      "202611": {"zd": 100, "tidio": 60}
+    },
+    "Michael Scott Chavez": {
+      "202601": {"zd": 100, "tidio": 89}, "202602": {"zd": 86, "tidio": 95},
+      "202603": {"zd": 96, "tidio": null}, "202604": {"zd": 87, "tidio": null},
+      "202605": {"zd": 94, "tidio": null}, "202606": {"zd": 87, "tidio": null},
+      "202607": {"zd": 100, "tidio": 86}, "202608": {"zd": 100, "tidio": 86},
+      "202609": {"zd": null, "tidio": 88}, "202610": {"zd": 100, "tidio": 86},
+      "202611": {"zd": 100, "tidio": 80}
+    },
+    "Eri Dotson": {
+      "202601": {"zd": 100, "tidio": 100}, "202602": {"zd": 100, "tidio": 83},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": 95, "tidio": null},
+      "202605": {"zd": 95, "tidio": null}, "202606": {"zd": 95, "tidio": null},
+      "202607": {"zd": 100, "tidio": 50}, "202608": {"zd": 100, "tidio": 50},
+      "202609": {"zd": null, "tidio": 92}, "202610": {"zd": 100, "tidio": 50},
+      "202611": {"zd": 86, "tidio": 75}
+    },
+    "Michael Nguyen": {
+      "202601": {"zd": 100, "tidio": 89}, "202602": {"zd": 100, "tidio": 78},
+      "202603": {"zd": 88, "tidio": null}, "202604": {"zd": 95, "tidio": null},
+      "202605": {"zd": 83, "tidio": null}, "202606": {"zd": 95, "tidio": null},
+      "202607": {"zd": 100, "tidio": 82}, "202608": {"zd": 100, "tidio": 82},
+      "202609": {"zd": null, "tidio": 100}, "202610": {"zd": 100, "tidio": 82},
+      "202611": {"zd": 100, "tidio": 78}
+    },
+    "Amber Bailey": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": null, "tidio": null}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": 100, "tidio": 100}
+    },
+    "Ramila Chaulagain": {
+      "202601": {"zd": 100, "tidio": 89}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": 90, "tidio": null},
+      "202605": {"zd": 100, "tidio": null}, "202606": {"zd": 90, "tidio": null},
+      "202607": {"zd": 100, "tidio": 94}, "202608": {"zd": 100, "tidio": 94},
+      "202609": {"zd": 100, "tidio": 83}, "202610": {"zd": 100, "tidio": 94},
+      "202611": {"zd": null, "tidio": null}
+    },
+    "Jeremy Carrillo": {
+      "202601": {"zd": 100, "tidio": 100}, "202602": {"zd": 100, "tidio": 83},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": 100, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": 100, "tidio": 100}, "202608": {"zd": 100, "tidio": 100},
+      "202609": {"zd": 100, "tidio": 89}, "202610": {"zd": 100, "tidio": 100},
+      "202611": {"zd": 100, "tidio": null}
+    }
+  },
+  "supervisors": {
+    "Ainsley Reynolds": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": null, "tidio": null},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": 92, "tidio": null},
+      "202607": {"zd": 93, "tidio": null}, "202608": {"zd": 85, "tidio": null},
+      "202609": {"zd": 100, "tidio": 91}, "202610": {"zd": 95, "tidio": 100},
+      "202611": {"zd": 100, "tidio": 25}
+    },
+    "Alex Blair": {
+      "202601": {"zd": 92, "tidio": 93}, "202602": {"zd": 100, "tidio": 89},
+      "202603": {"zd": 96, "tidio": null}, "202604": {"zd": 89, "tidio": null},
+      "202605": {"zd": 87, "tidio": null}, "202606": {"zd": 94, "tidio": null},
+      "202607": {"zd": 92, "tidio": null}, "202608": {"zd": 87, "tidio": 88},
+      "202609": {"zd": 0, "tidio": 85}, "202610": {"zd": 95, "tidio": 86},
+      "202611": {"zd": 96, "tidio": 88}
+    },
+    "Angy Chang": {
+      "202601": {"zd": 90, "tidio": 94}, "202602": {"zd": 100, "tidio": 96},
+      "202603": {"zd": 100, "tidio": null}, "202604": {"zd": 93, "tidio": null},
+      "202605": {"zd": 88, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": null, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": null, "tidio": null}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": null, "tidio": null}
+    },
+    "Chris Lee": {
+      "202601": {"zd": 90, "tidio": 82}, "202602": {"zd": 97, "tidio": 98},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": null, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": null, "tidio": null}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": null, "tidio": null}
+    },
+    "Lauren Montanye": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": 100, "tidio": null},
+      "202603": {"zd": 94, "tidio": null}, "202604": {"zd": 91, "tidio": null},
+      "202605": {"zd": 87, "tidio": null}, "202606": {"zd": 100, "tidio": null},
+      "202607": {"zd": 98, "tidio": null}, "202608": {"zd": 100, "tidio": null},
+      "202609": {"zd": 92, "tidio": 50}, "202610": {"zd": 95, "tidio": 95},
+      "202611": {"zd": 95, "tidio": 94}
+    },
+    "Neyat Abraha": {
+      "202601": {"zd": 97, "tidio": 89}, "202602": {"zd": 95, "tidio": 88},
+      "202603": {"zd": 94, "tidio": null}, "202604": {"zd": 90, "tidio": null},
+      "202605": {"zd": 91, "tidio": null}, "202606": {"zd": 88, "tidio": null},
+      "202607": {"zd": 97, "tidio": null}, "202608": {"zd": 94, "tidio": 82},
+      "202609": {"zd": 100, "tidio": 79}, "202610": {"zd": 89, "tidio": 85},
+      "202611": {"zd": 100, "tidio": 84}
+    },
+    "Shaheer Kanji": {
+      "202601": {"zd": 100, "tidio": null}, "202602": {"zd": 100, "tidio": 100},
+      "202603": {"zd": null, "tidio": null}, "202604": {"zd": null, "tidio": null},
+      "202605": {"zd": null, "tidio": null}, "202606": {"zd": null, "tidio": null},
+      "202607": {"zd": null, "tidio": null}, "202608": {"zd": null, "tidio": null},
+      "202609": {"zd": null, "tidio": null}, "202610": {"zd": null, "tidio": null},
+      "202611": {"zd": null, "tidio": null}
+    },
+    "Shelby Coldiron": {
+      "202601": {"zd": null, "tidio": null}, "202602": {"zd": 95, "tidio": null},
+      "202603": {"zd": 91, "tidio": null}, "202604": {"zd": 88, "tidio": null},
+      "202605": {"zd": 89, "tidio": null}, "202606": {"zd": 92, "tidio": null},
+      "202607": {"zd": 92, "tidio": null}, "202608": {"zd": 100, "tidio": 77},
+      "202609": {"zd": 100, "tidio": 89}, "202610": {"zd": 91, "tidio": 90},
+      "202611": {"zd": 100, "tidio": 85}
+    }
+  }
+}
