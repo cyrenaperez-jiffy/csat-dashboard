@@ -325,7 +325,7 @@
             tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y !== null ? c.parsed.y + '%' : 'N/A'}` } }
           },
           scales: {
-            y: { min: 80, max: 100, ticks: { stepSize: 2, callback: v => v + '%' } }
+            y: { min: 70, max: 100, ticks: { stepSize: 2, callback: v => v + '%' } }
           },
           interaction: { intersect: false, mode: 'index' }
         }
