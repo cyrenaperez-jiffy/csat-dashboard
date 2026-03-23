@@ -106,6 +106,7 @@
     .heatmap-table tr:hover td.yellow { background: #ffe07a; }
     .heatmap-table tr:hover td.red { background: #ffb0ba; }
     .table-scroll { overflow-x: auto; }
+    .hidden { display: none !important; }
     footer {
       text-align: center; padding: 20px; font-size: 0.78rem; color: var(--muted);
       border-top: 1px solid var(--border);
@@ -133,6 +134,10 @@
         <button data-metric="tidio">Tidio CSAT</button>
         <button data-metric="combined">Combined</button>
       </div>
+    </div>
+    <div id="supervisor-filter-group">
+      <label>Supervisor</label><br>
+      <select id="supervisor-filter"><option value="all">All Supervisors</option></select>
     </div>
     <div>
       <label>Filter Person</label><br>
@@ -173,6 +178,7 @@
     let currentView = 'agents';
     let currentMetric = 'zd';
     let currentPerson = 'all';
+    let currentSupervisor = 'all';
     let searchText = '';
 
     const COLORS = [
@@ -188,15 +194,78 @@
       DATA = await res.json();
       document.getElementById('last-updated').textContent =
         `Last updated: ${DATA.last_updated} \u2022 ${DATA.weeks.length} weeks tracked`;
+      populateSupervisorFilter();
       populateFilter();
+      updateSupervisorFilterVisibility();
       render();
+    }
+
+    function getSupervisorsFromData() {
+      // Extract unique supervisor names from agent week entries
+      const supervisors = new Set();
+      for (const agentName of Object.keys(DATA.agents)) {
+        for (const weekKey of Object.keys(DATA.agents[agentName])) {
+          const sup = DATA.agents[agentName][weekKey].supervisor;
+          if (sup) supervisors.add(sup);
+        }
+      }
+      // Also add supervisors from the supervisors section as fallback
+      for (const supName of Object.keys(DATA.supervisors || {})) {
+        supervisors.add(supName);
+      }
+      return Array.from(supervisors).sort();
+    }
+
+    function populateSupervisorFilter() {
+      const sel = document.getElementById('supervisor-filter');
+      sel.innerHTML = '<option value="all">All Supervisors</option>';
+      const supervisors = getSupervisorsFromData();
+      supervisors.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name; opt.textContent = name;
+        sel.appendChild(opt);
+      });
+    }
+
+    function updateSupervisorFilterVisibility() {
+      const group = document.getElementById('supervisor-filter-group');
+      if (currentView === 'agents') {
+        group.classList.remove('hidden');
+      } else {
+        group.classList.add('hidden');
+        currentSupervisor = 'all';
+        document.getElementById('supervisor-filter').value = 'all';
+      }
+    }
+
+    function getAgentsForSupervisor(supervisorName) {
+      // Returns set of agent names that are assigned to this supervisor in ANY week
+      const agents = new Set();
+      for (const agentName of Object.keys(DATA.agents)) {
+        for (const weekKey of Object.keys(DATA.agents[agentName])) {
+          const entry = DATA.agents[agentName][weekKey];
+          if (entry.supervisor === supervisorName) {
+            agents.add(agentName);
+            break; // Found at least one week, include this agent
+          }
+        }
+      }
+      return agents;
     }
 
     function populateFilter() {
       const sel = document.getElementById('person-filter');
       sel.innerHTML = '<option value="all">All</option>';
       const source = DATA[currentView];
-      Object.keys(source).sort().forEach(name => {
+      let names = Object.keys(source).sort();
+
+      // If supervisor filter is active and we're in agent view, only show those agents
+      if (currentView === 'agents' && currentSupervisor !== 'all') {
+        const supervisorAgents = getAgentsForSupervisor(currentSupervisor);
+        names = names.filter(n => supervisorAgents.has(n));
+      }
+
+      names.forEach(name => {
         const opt = document.createElement('option');
         opt.value = name; opt.textContent = name;
         sel.appendChild(opt);
@@ -206,6 +275,13 @@
     function getFilteredNames() {
       const source = DATA[currentView];
       let names = Object.keys(source).sort();
+
+      // Apply supervisor filter (only in agent view)
+      if (currentView === 'agents' && currentSupervisor !== 'all') {
+        const supervisorAgents = getAgentsForSupervisor(currentSupervisor);
+        names = names.filter(n => supervisorAgents.has(n));
+      }
+
       if (currentPerson !== 'all') names = names.filter(n => n === currentPerson);
       if (searchText) {
         const q = searchText.toLowerCase();
@@ -263,12 +339,13 @@
       const delta = (avg !== null && prevAvg !== null) ? avg - prevAvg : null;
 
       const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : currentMetric === 'tidio' ? 'Tidio CSAT' : 'Combined CSAT';
+      const supLabel = currentSupervisor !== 'all' ? ` \u2014 ${currentSupervisor}` : '';
       const deltaHtml = delta !== null
         ? `<div class="delta ${delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat'}">${delta > 0 ? '\u25B2' : delta < 0 ? '\u25BC' : '\u25C6'} ${Math.abs(delta)}pp vs prior week</div>`
         : '';
 
       document.getElementById('kpi-row').innerHTML = `
-        <div class="kpi"><div class="label">Avg ${metricLabel} (Wk ${weeks.length})</div><div class="value">${avg !== null ? avg + '%' : 'N/A'}</div>${deltaHtml}</div>
+        <div class="kpi"><div class="label">Avg ${metricLabel} (Wk ${weeks.length})${supLabel}</div><div class="value">${avg !== null ? avg + '%' : 'N/A'}</div>${deltaHtml}</div>
         <div class="kpi"><div class="label">\u2265 95% (Green)</div><div class="value" style="color:var(--green)">${above95}</div><div class="delta flat">of ${lastVals.length} with data</div></div>
         <div class="kpi"><div class="label">&lt; 90% (Red)</div><div class="value" style="color:var(--red)">${below90}</div><div class="delta flat">of ${lastVals.length} with data</div></div>
         <div class="kpi"><div class="label">${currentView === 'agents' ? 'Agents' : 'Supervisors'} Shown</div><div class="value">${names.length}</div><div class="delta flat">${lastVals.length} with data this week</div></div>
@@ -282,8 +359,9 @@
       const names = getFilteredNames();
       const labels = DATA.weeks.map(w => 'Wk ' + parseInt(w.week.slice(4)));
       const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : currentMetric === 'tidio' ? 'Tidio CSAT' : 'Combined CSAT';
+      const supLabel = currentSupervisor !== 'all' ? ` \u2014 ${currentSupervisor}` : '';
 
-      document.getElementById('trend-title').textContent = `${metricLabel} Trend`;
+      document.getElementById('trend-title').textContent = `${metricLabel} Trend${supLabel}`;
 
       const ctx = document.getElementById('trendChart').getContext('2d');
       if (trendChart) trendChart.destroy();
@@ -377,8 +455,9 @@
       const names = getFilteredNames();
       const metricLabel = currentMetric === 'zd' ? 'ZD CSAT' : currentMetric === 'tidio' ? 'Tidio CSAT' : 'Combined CSAT';
       const entityLabel = currentView === 'agents' ? 'Agent' : 'Supervisor';
+      const supLabel = currentSupervisor !== 'all' ? ` (${currentSupervisor}'s team)` : '';
 
-      document.getElementById('table-title').textContent = `${metricLabel} by ${entityLabel} \u2014 Heatmap`;
+      document.getElementById('table-title').textContent = `${metricLabel} by ${entityLabel}${supLabel} \u2014 Heatmap`;
 
       const weekLabels = DATA.weeks.map(w => 'Wk ' + parseInt(w.week.slice(4)));
       let html = '<thead><tr><th>' + entityLabel + '</th>' +
@@ -416,7 +495,10 @@
       document.querySelectorAll('#view-toggle button').forEach(b => b.classList.remove('active'));
       e.target.classList.add('active');
       currentPerson = 'all';
+      currentSupervisor = 'all';
       document.getElementById('person-filter').value = 'all';
+      document.getElementById('supervisor-filter').value = 'all';
+      updateSupervisorFilterVisibility();
       populateFilter();
       render();
     });
@@ -426,6 +508,14 @@
       currentMetric = e.target.dataset.metric;
       document.querySelectorAll('#metric-toggle button').forEach(b => b.classList.remove('active'));
       e.target.classList.add('active');
+      render();
+    });
+
+    document.getElementById('supervisor-filter').addEventListener('change', e => {
+      currentSupervisor = e.target.value;
+      currentPerson = 'all';
+      document.getElementById('person-filter').value = 'all';
+      populateFilter();
       render();
     });
 
