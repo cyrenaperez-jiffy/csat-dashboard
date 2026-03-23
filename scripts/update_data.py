@@ -35,12 +35,6 @@ HEX_URL = (
     "?tab=weekly-agents-performance"
 )
 
-BY_AGENT_URL = (
-    "https://app.hex.tech/122d0b88-6d5d-4970-baf8-9903b675dbd7/"
-    "app/CS-Agents-Performance-0319cw9cr1Oeq7k7Bz5KP1/latest"
-    "?tab=by-agent"
-)
-
 TARGET_AGENTS = [
     "Damian Doubrava", "Enrico Davis", "Rachel Dunlap", "Samantha Decastro",
     "Bo Repko", "Rosa Nuno", "Jessie Gregory", "Cristie Avant",
@@ -77,7 +71,6 @@ def wait_for_data_loaded(page, timeout=30):
 
 def get_available_weeks(page):
     """Open the week dropdown and return list of week strings like ['202611', ...]."""
-    # Click the week selector button
     page.evaluate("""
         const span = Array.from(document.querySelectorAll('span'))
             .find(s => /^2026\\d{2}$/.test(s.textContent.trim()));
@@ -95,7 +88,6 @@ def get_available_weeks(page):
 
 def select_week(page, week_num):
     """Select a specific week in the dropdown."""
-    # Open dropdown
     page.evaluate("""
         const span = Array.from(document.querySelectorAll('span'))
             .find(s => /^2026\\d{2}$/.test(s.textContent.trim()));
@@ -103,7 +95,6 @@ def select_week(page, week_num):
     """)
     time.sleep(0.5)
 
-    # Click the radio for the target week
     page.evaluate(f"""
         const labels = document.querySelectorAll('label.bp5-control.bp5-radio');
         const target = Array.from(labels).find(l => l.textContent.trim() === '{week_num}');
@@ -141,8 +132,33 @@ def scrape_supervisor_data(page):
     """)
 
 
+def scrape_agent_names(page):
+    """Extract just agent names from the agent grid on the current page view."""
+    return page.evaluate("""
+        (() => {
+            const grids = document.querySelectorAll('[role="treegrid"]');
+            for (const grid of grids) {
+                const headers = Array.from(grid.querySelectorAll('[role="columnheader"]'))
+                    .map(h => h.textContent.trim());
+                if (!headers.includes('agent')) continue;
+                const rows = grid.querySelectorAll('[role="row"]');
+                const names = [];
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('[role="gridcell"]');
+                    if (cells.length >= 3) {
+                        const name = cells[1]?.textContent.trim();
+                        if (name) names.push(name);
+                    }
+                });
+                return names;
+            }
+            return [];
+        })()
+    """)
+
+
 def scrape_agent_data(page):
-    """Extract agent CSAT data from the current page view."""
+    """Extract agent CSAT data from the agent grid on the current page view."""
     return page.evaluate("""
         (() => {
             const grids = document.querySelectorAll('[role="treegrid"]');
@@ -180,6 +196,148 @@ def get_week_dates(page):
             return {start: startDate, end: endDate};
         })()
     """)
+
+
+def clear_supervisor_filter(page):
+    """Clear the Supervisors filter back to 'All'."""
+    # Remove any individual supervisor tags, then re-add "All"
+    page.evaluate("""
+        (() => {
+            // Find the Supervisors parameter section
+            const labels = Array.from(document.querySelectorAll('span'));
+            const supLabel = labels.find(s => s.textContent.trim() === 'Supervisors');
+            if (!supLabel) return;
+            const container = supLabel.closest('[class*="AppCell"]');
+            if (!container) return;
+            // Click all remove (x) buttons on tags to clear selections
+            const removeButtons = container.querySelectorAll('[class*="bp5-tag-remove"], button[class*="remove"]');
+            removeButtons.forEach(btn => btn.click());
+        })()
+    """)
+    time.sleep(0.5)
+
+    # Now type "All" and select it
+    page.evaluate("""
+        (() => {
+            const labels = Array.from(document.querySelectorAll('span'));
+            const supLabel = labels.find(s => s.textContent.trim() === 'Supervisors');
+            if (!supLabel) return;
+            const container = supLabel.closest('[class*="AppCell"]');
+            if (!container) return;
+            const input = container.querySelector('input');
+            if (input) {
+                input.focus();
+                input.value = '';
+                input.dispatchEvent(new Event('input', {bubbles: true}));
+            }
+        })()
+    """)
+    time.sleep(0.5)
+
+    # Click "All" option in the dropdown
+    page.evaluate("""
+        (() => {
+            const menuItems = document.querySelectorAll('[class*="bp5-menu-item"], [role="option"]');
+            const allItem = Array.from(menuItems).find(m => m.textContent.trim() === 'All');
+            if (allItem) allItem.click();
+        })()
+    """)
+    time.sleep(2)
+    wait_for_data_loaded(page)
+
+
+def select_supervisor_filter(page, supervisor_name):
+    """Select a single supervisor in the Supervisors filter dropdown."""
+    # First clear any existing selection
+    page.evaluate("""
+        (() => {
+            const labels = Array.from(document.querySelectorAll('span'));
+            const supLabel = labels.find(s => s.textContent.trim() === 'Supervisors');
+            if (!supLabel) return;
+            const container = supLabel.closest('[class*="AppCell"]');
+            if (!container) return;
+            // Click all remove (x) buttons on tags
+            const removeButtons = container.querySelectorAll('[class*="bp5-tag-remove"], button[class*="remove"]');
+            removeButtons.forEach(btn => btn.click());
+        })()
+    """)
+    time.sleep(0.5)
+
+    # Click on the input and type the supervisor name
+    page.evaluate("""
+        (() => {
+            const labels = Array.from(document.querySelectorAll('span'));
+            const supLabel = labels.find(s => s.textContent.trim() === 'Supervisors');
+            if (!supLabel) return;
+            const container = supLabel.closest('[class*="AppCell"]');
+            if (!container) return;
+            const input = container.querySelector('input');
+            if (input) {
+                input.focus();
+                input.click();
+            }
+        })()
+    """)
+    time.sleep(0.3)
+
+    # Type the supervisor name to filter
+    page.evaluate(f"""
+        (() => {{
+            const labels = Array.from(document.querySelectorAll('span'));
+            const supLabel = labels.find(s => s.textContent.trim() === 'Supervisors');
+            if (!supLabel) return;
+            const container = supLabel.closest('[class*="AppCell"]');
+            if (!container) return;
+            const input = container.querySelector('input');
+            if (input) {{
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLInputElement.prototype, 'value'
+                ).set;
+                nativeInputValueSetter.call(input, '{supervisor_name}');
+                input.dispatchEvent(new Event('input', {{bubbles: true}}));
+                input.dispatchEvent(new Event('change', {{bubbles: true}}));
+            }}
+        }})()
+    """)
+    time.sleep(1)
+
+    # Click the matching option in the dropdown
+    page.evaluate(f"""
+        (() => {{
+            const menuItems = document.querySelectorAll(
+                '[class*="bp5-menu-item"], [role="option"], [class*="menu"] li'
+            );
+            const match = Array.from(menuItems).find(
+                m => m.textContent.trim() === '{supervisor_name}'
+            );
+            if (match) match.click();
+        }})()
+    """)
+    time.sleep(2)
+    wait_for_data_loaded(page)
+    time.sleep(1)
+
+
+def scrape_supervisor_agent_mapping(page, supervisor_names):
+    """
+    For each supervisor, apply the filter and read which agents appear.
+    Returns dict: { supervisor_name: [agent_name, ...] }
+    """
+    mapping = {}
+    for sup_name in supervisor_names:
+        print(f"    Filtering for {sup_name}...", end=" ", flush=True)
+        select_supervisor_filter(page, sup_name)
+        agents = scrape_agent_names(page)
+        # Filter to target agents only
+        agents = [a for a in agents if a in TARGET_AGENTS]
+        mapping[sup_name] = agents
+        print(f"{len(agents)} agents")
+
+    # Reset filter to All
+    clear_supervisor_filter(page)
+    time.sleep(1)
+
+    return mapping
 
 
 def main():
@@ -228,13 +386,11 @@ def main():
         weeks = get_available_weeks(page)
         print(f"Available weeks: {weeks}")
 
-        # Scrape supervisor data for each week
-        print("\n--- Scraping supervisor data ---")
+        # Scrape data for each week from the weekly-agents-performance tab
         for week in weeks:
-            print(f"  Week {week}...", end=" ", flush=True)
+            print(f"\n=== Week {week} ===")
             select_week(page, week)
             dates = get_week_dates(page)
-            sup_rows = scrape_supervisor_data(page)
 
             # Update weeks list
             existing_weeks = {w["week"]: w for w in data["weeks"]}
@@ -246,30 +402,22 @@ def main():
                 })
             data["weeks"] = sorted(data["weeks"], key=lambda w: w["week"])
 
-            # Update supervisor data
+            # 1. Scrape supervisor CSAT data
+            sup_rows = scrape_supervisor_data(page)
+            supervisor_names = []
             for row in sup_rows:
                 name = row["name"]
+                supervisor_names.append(name)
                 if name not in data["supervisors"]:
                     data["supervisors"][name] = {}
                 data["supervisors"][name][week] = {
                     "zd": parse_pct(row["zd"]),
                     "tidio": parse_pct(row["tidio"]),
                 }
-            print(f"{len(sup_rows)} supervisors")
+            print(f"  Supervisors: {len(sup_rows)}")
 
-        # Now scrape agent data from the by-agent tab
-        print("\n--- Scraping agent data ---")
-        page.goto(BY_AGENT_URL, wait_until="networkidle", timeout=60000)
-        time.sleep(5)
-        wait_for_data_loaded(page)
-
-        # The by-agent tab may have a different selector mechanism
-        # We iterate weeks there too
-        for week in weeks:
-            print(f"  Week {week}...", end=" ", flush=True)
-            select_week(page, week)
+            # 2. Scrape agent CSAT data (with filter set to All)
             agent_rows = scrape_agent_data(page)
-
             for row in agent_rows:
                 name = row["name"]
                 if name not in TARGET_AGENTS:
@@ -280,7 +428,15 @@ def main():
                     "zd": parse_pct(row["zd"]),
                     "tidio": parse_pct(row["tidio"]),
                 }
-            print(f"{len(agent_rows)} agents (filtered to target list)")
+            print(f"  Agents: {len(agent_rows)}")
+
+            # 3. Scrape supervisor-agent mapping by filtering each supervisor
+            print("  Mapping supervisors to agents...")
+            mapping = scrape_supervisor_agent_mapping(page, supervisor_names)
+            for sup_name, agent_list in mapping.items():
+                for agent_name in agent_list:
+                    if agent_name in data["agents"] and week in data["agents"][agent_name]:
+                        data["agents"][agent_name][week]["supervisor"] = sup_name
 
         browser.close()
 
